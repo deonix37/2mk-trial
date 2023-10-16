@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Dto;
 
-final class Dimensions
+final class DimensionsDto
 {
     public function __construct(
         public readonly int $weight,
