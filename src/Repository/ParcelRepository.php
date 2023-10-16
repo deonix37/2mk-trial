@@ -23,28 +23,30 @@ class ParcelRepository extends ServiceEntityRepository
         parent::__construct($registry, Parcel::class);
     }
 
-    //    /**
-    //     * @return Parcel[] Returns an array of Parcel objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('r')
-    //            ->andWhere('r.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('r.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    public function findBySenderPhone(string $phone): array
+    {
+        return $this->createQueryBuilder('p')
+            ->join('p.sender', 's')
+            ->where('s.phone = :phone')
+            ->setParameter('phone', $phone)
+            ->getQuery()
+            ->getResult();
+    }
 
-    //    public function findOneBySomeField($value): ?Parcel
-    //    {
-    //        return $this->createQueryBuilder('r')
-    //            ->andWhere('r.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    public function findByReceiverFullName(string $fullName): array
+    {
+        $nameParts = preg_split('/\s+/', strtoupper($fullName));
+
+        return $this->createQueryBuilder('p')
+            ->join('p.recipient', 'r')
+            ->join('r.fullName', 'rf')
+            ->where('UPPER(rf.lastName) = :lastName')
+            ->andWhere('UPPER(rf.firstName) = :firstName')
+            ->andWhere('UPPER(rf.middleName) = :middleName')
+            ->setParameter('lastName', $nameParts[0])
+            ->setParameter('firstName', $nameParts[1])
+            ->setParameter('middleName', $nameParts[2])
+            ->getQuery()
+            ->getResult();
+    }
 }
